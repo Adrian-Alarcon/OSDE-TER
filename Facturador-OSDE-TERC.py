@@ -1,5 +1,4 @@
 import rutas
-# from txva01 import va01
 from va01_2 import va01_2
 from zsd_toma import toma
 from tkinter import *
@@ -8,11 +7,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from getpass import getuser
 import shutil
-import openpyxl
-from shutil import copy
-import shutil
 import pythoncom
-from lecturaPdf import lectorPdf
 import time
 from openpyxl import load_workbook
 
@@ -23,7 +18,7 @@ def interfaz():
     
      root = Tk()
      
-     root.title("FACTURADOR_CASA")
+     root.title("CARGA-OSDE-TERC")
      root.resizable(0,0)
      root.geometry('300x300+500+50'.format(500, 600))
 
@@ -83,7 +78,7 @@ def interfaz():
                     else:
                          l_afiliados_sap.append(h_t[f"M{i}"].value)
                          l_id_productos.append(h_t[f"N{i}"].value)
-                         l_descripciones.append(h_t[f"A{i}"].value)
+                         #l_descripciones.append(h_t[f"A{i}"].value)
                          l_cantidades_va01.append(h_t[f"D{i}"].value)
                          l_canales.append(h_t[f"W{i}"].value)
                          l_sectores.append(h_t[f"X{i}"].value)
@@ -110,7 +105,7 @@ def interfaz():
                          print(f"Afiliado Diferente")
                          print(f" ------ SE FACTURA AF: {afiliado_anterior} ------ ")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}\n\n")
-                         pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1], l_descripciones_facturar)
+                         pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1])
                          time.sleep(1)
                          _toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1])
 
@@ -132,7 +127,7 @@ def interfaz():
                     if i == len(l_afiliados_sap) - 1:
                          print(f" ------ ULTIMO AFILIADO: {afiliado_actual}")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}")
-                         pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i], l_descripciones_facturar)
+                         pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i])
                          time.sleep(1)
                          _toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i])
 

@@ -33,7 +33,7 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
           #session.findById("wnd[0]").maximize()
           session.findById("wnd[0]/tbar[0]/okcd").text = "/NVA01"
           session.findById("wnd[0]").sendVKey(0)
-          session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "ZTRA"
+          session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "ZTER"
           session.findById("wnd[0]/usr/ctxtVBAK-VKORG").text = "SC10"
           session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = canal
           session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = sector
@@ -41,7 +41,7 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
           session.findById("wnd[0]/usr/ctxtVBAK-SPART").caretPosition = 2
           session.findById("wnd[0]").sendVKey(0)
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD").text = ped_ext
-          session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "20000123"
+          session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "100000029"
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = dispone
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD").setFocus()
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD").caretPosition = 8
@@ -61,8 +61,6 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,{i}]").text = lista_id_productos[i]
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtRV45A-KWMENG[2,{i}]").text = cantidades[i]
                     
-                    if lista_id_productos[i] == "99999":
-                         session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtVBAP-ARKTX[5,{i}]").text = lista_descripciones[i]
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-WERKS[12,{i}]").text = "DSZA"
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-LGORT[65,{i}]").text = "ALMA"
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-LGORT[65,{i}]").setFocus()

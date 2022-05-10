@@ -1,5 +1,3 @@
-
-from getpass import getuser
 import win32com.client as win32
 import pythoncom
 import win32com.client
