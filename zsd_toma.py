@@ -5,7 +5,7 @@ import time
 
 
 
-def toma(sesionsap, ped_final, dispone, afiliado_sap, canal):
+def toma(sesionsap, ped_final, dispone, afiliado_sap, canal, observaciones_internas):
     
     pythoncom.CoInitialize()
 
@@ -32,8 +32,6 @@ def toma(sesionsap, ped_final, dispone, afiliado_sap, canal):
         return
     
     try:
-
-        #session.findById("wnd[0]").maximize()
         session.findById("wnd[0]/tbar[0]/okcd").text = "/NZSD_TOMA"
         session.findById("wnd[0]").sendVKey(0)
         session.findById("wnd[0]/tbar[1]/btn[7]").press()
@@ -53,6 +51,7 @@ def toma(sesionsap, ped_final, dispone, afiliado_sap, canal):
         
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/ctxtGS_ENTREGA-DISPONE_ID").setFocus()
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/ctxtGS_ENTREGA-DISPONE_ID").caretPosition = 8
+        session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/txtGS_ENTREGA-OBSERV_INT").text = observaciones_internas
         session.findById("wnd[0]").sendVKey(0)
         session.findById("wnd[0]").sendVKey(0)
         session.findById("wnd[0]").sendVKey(0)

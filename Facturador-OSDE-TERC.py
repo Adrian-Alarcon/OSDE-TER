@@ -38,7 +38,7 @@ def interfaz():
           afiliado_anterior = None
           afiliado_actual = None
 
-          l_descripciones = []
+          l_obsersevaciones_int = []
           l_id_productos = []
           l_cantidades_va01 = []
           l_afiliados_sap = []
@@ -48,7 +48,7 @@ def interfaz():
           l_ped_ext = []
           l_convenios = []
 
-          l_descripciones_facturar = []
+          l_observ_toma = []
           l_mat_facturar = []
           l_cant_facturar = []
           fecha_entrega = []
@@ -61,24 +61,26 @@ def interfaz():
           excel_trabajo = load_workbook(filename=rutas.archivo_excel_trabajo, data_only=True)
           try:
                h_t = excel_trabajo["inicio"]
-               cont = 9
+               cont = 2
                max_filas = cont
-               
+
                # CALCULAR LA CANTIDAD DE FILAS MAXIMAS #
                while h_t[f"A{max_filas}"].value != None:
                     max_filas += 1
-          
 
-               for i in range(9, max_filas):
+
+               for i in range(2, max_filas):
                     revision = h_t[f"F{i}"].value
-                    
+
                     if revision == "SI":
                          print(f"AFILIADO {afiliado_actual} para REVISION")
                          continue
+                    elif h_t[f"A{i}"].value == "None":
+                         break
                     else:
-                         l_afiliados_sap.append(h_t[f"N{i}"].value)
-                         l_id_productos.append(h_t[f"O{i}"].value)
-                         l_descripciones.append(h_t[f"G{i}"].value)
+                         l_afiliados_sap.append(h_t[f"O{i}"].value)
+                         l_id_productos.append(h_t[f"P{i}"].value)
+                         l_obsersevaciones_int.append(h_t[f"G{i}"].value)
                          l_cantidades_va01.append(h_t[f"E{i}"].value)
                          l_canales.append(h_t[f"Y{i}"].value)
                          l_sectores.append(h_t[f"Z{i}"].value)
@@ -93,33 +95,33 @@ def interfaz():
                for i in range(len(l_afiliados_sap)):
                     afiliado_actual = l_afiliados_sap[i]
 
-                    
+
                     if afiliado_actual == afiliado_anterior or afiliado_anterior == None:
-                         print(f"Agregando Materiales: {l_descripciones[i]} | AFILIADO:{afiliado_actual} |")
-                         l_descripciones_facturar.append(l_descripciones[i])
+                         print(f"AFILIADO:{afiliado_actual} |")
+                         l_observ_toma.append(l_obsersevaciones_int[i])
                          l_mat_facturar.append(l_id_productos[i])
                          l_cant_facturar.append(l_cantidades_va01[i])
                          l_filas.append(filas_completar[i])
-                    
+
                     elif afiliado_actual != afiliado_anterior:
                          print(f"Afiliado Diferente")
                          print(f" ------ SE FACTURA AF: {afiliado_anterior} ------ ")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}\n\n")
-                         #pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1])
+                         pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1], l_observ_toma[0])
                          time.sleep(1)
-                         #_toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1])
+                         _toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1])
 
                          # Completar Excel con pedido generado
-                         # for fila in l_filas:
-                         #      h_t[f"Y{fila}"] = _toma
+                         for fila in l_filas:
+                              h_t[f"AA{fila}"] = _toma
 
-                         l_descripciones_facturar.clear()
+                         l_observ_toma.clear()
                          l_mat_facturar.clear()
                          l_cant_facturar.clear()
                          l_filas.clear()
 
-                         print(f"Agregando Materiales: {l_descripciones[i]} | AFILIADO:{afiliado_actual} |")
-                         l_descripciones_facturar.append(l_descripciones[i])
+                         print(f"AFILIADO:{afiliado_actual} |")
+                         l_observ_toma.append(l_obsersevaciones_int[i])
                          l_mat_facturar.append(l_id_productos[i])
                          l_cant_facturar.append(l_cantidades_va01[i])
                          l_filas.append(filas_completar[i])
@@ -127,15 +129,15 @@ def interfaz():
                     if i == len(l_afiliados_sap) - 1:
                          print(f" ------ ULTIMO AFILIADO: {afiliado_actual}")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}")
-                         #pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i])
+                         pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i])
                          time.sleep(1)
-                         #_toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i])
+                         _toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i])
 
                          # Completar Excel con pedido generado
-                         # for fila in l_filas:
-                         #      h_t[f"Y{fila}"] = _toma
-                         #
-                         # break
+                         for fila in l_filas:
+                              h_t[f"AA{fila}"] = _toma
+
+                         break
                     afiliado_anterior = afiliado_actual
 
 

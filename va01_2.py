@@ -30,7 +30,6 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
           return
 
      try:
-          #session.findById("wnd[0]").maximize()
           session.findById("wnd[0]/tbar[0]/okcd").text = "/NVA01"
           session.findById("wnd[0]").sendVKey(0)
           session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "ZTER"
@@ -41,7 +40,7 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
           session.findById("wnd[0]/usr/ctxtVBAK-SPART").caretPosition = 2
           session.findById("wnd[0]").sendVKey(0)
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD").text = ped_ext
-          session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "100000029"
+          session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "10000029"
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = dispone
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD").setFocus()
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD").caretPosition = 8
