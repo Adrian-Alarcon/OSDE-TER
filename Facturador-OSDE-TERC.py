@@ -32,7 +32,7 @@ def interfaz():
 
           pythoncom.CoInitialize()
           # Crear una copia del excel padre.
-          shutil.copy(rutas.archivo_excel, rutas.archivo_excel_trabajo)
+          shutil.copy(rutas.archivo_excel_trabajo, rutas.archivo_excel)
 
           #---------VARIABLES--------#
           afiliado_anterior = None
@@ -58,7 +58,7 @@ def interfaz():
           #---------------------------#
           
           excel_trabajo = load_workbook(rutas.archivo_excel_trabajo, data_only=True)
-          excel_trabajo = openpyxl.load_workbook(filename=rutas.archivo_excel_trabajo, data_only=True)
+          excel_trabajo = load_workbook(filename=rutas.archivo_excel_trabajo, data_only=True)
           try:
                h_t = excel_trabajo["inicio"]
                cont = 9
@@ -76,16 +76,16 @@ def interfaz():
                          print(f"AFILIADO {afiliado_actual} para REVISION")
                          continue
                     else:
-                         l_afiliados_sap.append(h_t[f"M{i}"].value)
-                         l_id_productos.append(h_t[f"N{i}"].value)
-                         #l_descripciones.append(h_t[f"A{i}"].value)
-                         l_cantidades_va01.append(h_t[f"D{i}"].value)
-                         l_canales.append(h_t[f"W{i}"].value)
-                         l_sectores.append(h_t[f"X{i}"].value)
-                         l_ped_ext.append(h_t[f"E{i}"].value)
-                         l_dispones.append(h_t[f"L{i}"].value)
-                         fecha_entrega.append(h_t[f"T{i}"].value)
-                         l_convenios.append(h_t[f"O{i}"].value)
+                         l_afiliados_sap.append(h_t[f"N{i}"].value)
+                         l_id_productos.append(h_t[f"O{i}"].value)
+                         l_descripciones.append(h_t[f"G{i}"].value)
+                         l_cantidades_va01.append(h_t[f"E{i}"].value)
+                         l_canales.append(h_t[f"Y{i}"].value)
+                         l_sectores.append(h_t[f"Z{i}"].value)
+                         l_ped_ext.append(h_t[f"F{i}"].value)
+                         l_dispones.append(h_t[f"N{i}"].value)
+                         fecha_entrega.append(h_t[f"V{i}"].value)
+                         l_convenios.append(h_t[f"Q{i}"].value)
                          filas_completar.append(str(i))
                print(f"Filas a completar:", filas_completar)
 
@@ -105,13 +105,13 @@ def interfaz():
                          print(f"Afiliado Diferente")
                          print(f" ------ SE FACTURA AF: {afiliado_anterior} ------ ")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}\n\n")
-                         pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1])
+                         #pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1])
                          time.sleep(1)
-                         _toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1])
+                         #_toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1])
 
                          # Completar Excel con pedido generado
-                         for fila in l_filas:
-                              h_t[f"Y{fila}"] = _toma
+                         # for fila in l_filas:
+                         #      h_t[f"Y{fila}"] = _toma
 
                          l_descripciones_facturar.clear()
                          l_mat_facturar.clear()
@@ -127,16 +127,15 @@ def interfaz():
                     if i == len(l_afiliados_sap) - 1:
                          print(f" ------ ULTIMO AFILIADO: {afiliado_actual}")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}")
-                         pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i])
+                         #pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i])
                          time.sleep(1)
-                         _toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i])
+                         #_toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i])
 
                          # Completar Excel con pedido generado
-                         for fila in l_filas:
-                              h_t[f"Y{fila}"] = _toma
-
-                         break
-                    
+                         # for fila in l_filas:
+                         #      h_t[f"Y{fila}"] = _toma
+                         #
+                         # break
                     afiliado_anterior = afiliado_actual
 
 
