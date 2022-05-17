@@ -20,13 +20,12 @@ def interfaz():
      
      root.title("CARGA-OSDE-TERC")
      root.resizable(0,0)
-     root.geometry('300x300+500+50'.format(500, 600))
+     root.geometry('200x200+300+20'.format(300, 200))
 
      miFrame=Frame(root,width=500)
      miFrame.pack()
      miFrame2=Frame(root)
      miFrame2.pack()
-
 
      def facturador():
 
@@ -47,7 +46,9 @@ def interfaz():
           l_sectores = []
           l_ped_ext = []
           l_convenios = []
+          l_mat_cliente = []
 
+          l_mat_cliente_fact = []
           l_observ_toma = []
           l_mat_facturar = []
           l_cant_facturar = []
@@ -57,30 +58,24 @@ def interfaz():
           l_filas = []
           #---------------------------#
           
-          excel_trabajo = load_workbook(rutas.archivo_excel_trabajo, data_only=True)
-          excel_trabajo = load_workbook(filename=rutas.archivo_excel_trabajo, data_only=True)
+          excel_trabajo = load_workbook(rutas.archivo_excel, data_only=True)
           try:
                h_t = excel_trabajo["inicio"]
                cont = 2
-               max_filas = cont
-
-               # CALCULAR LA CANTIDAD DE FILAS MAXIMAS #
-               while h_t[f"A{max_filas}"].value != None:
-                    max_filas += 1
+               max_filas = int(h_t[f"A2"].value)
 
 
-               for i in range(2, max_filas):
-                    revision = h_t[f"F{i}"].value
+               for i in range(2, max_filas + 1):
+                    revision = h_t[f"H{i}"].value
 
                     if revision == "SI":
                          print(f"AFILIADO {afiliado_actual} para REVISION")
                          continue
-                    elif h_t[f"A{i}"].value == "None":
-                         break
                     else:
                          l_afiliados_sap.append(h_t[f"O{i}"].value)
                          l_id_productos.append(h_t[f"P{i}"].value)
                          l_obsersevaciones_int.append(h_t[f"G{i}"].value)
+                         l_mat_cliente.append(h_t[f"D{i}"].value)
                          l_cantidades_va01.append(h_t[f"E{i}"].value)
                          l_canales.append(h_t[f"Y{i}"].value)
                          l_sectores.append(h_t[f"Z{i}"].value)
@@ -95,11 +90,11 @@ def interfaz():
                for i in range(len(l_afiliados_sap)):
                     afiliado_actual = l_afiliados_sap[i]
 
-
                     if afiliado_actual == afiliado_anterior or afiliado_anterior == None:
                          print(f"AFILIADO:{afiliado_actual} |")
                          l_observ_toma.append(l_obsersevaciones_int[i])
                          l_mat_facturar.append(l_id_productos[i])
+                         l_mat_cliente_fact.append(l_mat_cliente[i])
                          l_cant_facturar.append(l_cantidades_va01[i])
                          l_filas.append(filas_completar[i])
 
@@ -107,9 +102,9 @@ def interfaz():
                          print(f"Afiliado Diferente")
                          print(f" ------ SE FACTURA AF: {afiliado_anterior} ------ ")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}\n\n")
-                         pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1], l_observ_toma[0])
+                         pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1], l_mat_cliente_fact)
                          time.sleep(1)
-                         _toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1])
+                         _toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1], l_observ_toma[i - 1])
 
                          # Completar Excel con pedido generado
                          for fila in l_filas:
@@ -117,21 +112,23 @@ def interfaz():
 
                          l_observ_toma.clear()
                          l_mat_facturar.clear()
+                         l_mat_cliente_fact.clear()
                          l_cant_facturar.clear()
                          l_filas.clear()
 
                          print(f"AFILIADO:{afiliado_actual} |")
                          l_observ_toma.append(l_obsersevaciones_int[i])
                          l_mat_facturar.append(l_id_productos[i])
+                         l_mat_cliente_fact.append(l_mat_cliente[i])
                          l_cant_facturar.append(l_cantidades_va01[i])
                          l_filas.append(filas_completar[i])
 
                     if i == len(l_afiliados_sap) - 1:
                          print(f" ------ ULTIMO AFILIADO: {afiliado_actual}")
                          print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}")
-                         pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i])
+                         pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i], l_mat_cliente_fact)
                          time.sleep(1)
-                         _toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i])
+                         _toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i], l_observ_toma[i])
 
                          # Completar Excel con pedido generado
                          for fila in l_filas:
@@ -144,7 +141,7 @@ def interfaz():
           except Exception as e:
                print(f"Excepcion el Excel de Trabajo {e}")
           finally:
-               excel_trabajo.save(rutas.archivo_excel_trabajo)
+               excel_trabajo.save(rutas.archivo_excel)
                excel_trabajo.close()
      
      
@@ -153,10 +150,10 @@ def interfaz():
           print(resultado_lectura)
 
      
-     botonPdf = Button(miFrame, text="Leer PDFS", command=lecturaPdfs)
+     # botonPdf = Button(miFrame, text="Leer PDFS", command=lecturaPdfs)
      botonCrear = Button(miFrame, text="Ejecutar", command=facturador)
-     botonPdf.grid(row = 10, column = 2, sticky = "e", padx = 10, pady = 10)
-     botonCrear.grid(row = 13, column = 2, sticky = "e", padx = 15, pady = 10)
+     # botonPdf.grid(row = 10, column = 2, sticky = "e", padx = 10, pady = 10)
+     botonCrear.grid(row = 13, column = 2, sticky = "e", padx = 15, pady = 40)
 
      root.mainloop()
 

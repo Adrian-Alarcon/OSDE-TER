@@ -3,7 +3,7 @@ import pythoncom
 import win32com.client
 import time
 
-def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_productos, cantidades, convenio, lista_descripciones):
+def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_productos, cantidades, convenio, lista_mat_cl):
 
      pythoncom.CoInitialize()
 
@@ -34,8 +34,8 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
           session.findById("wnd[0]").sendVKey(0)
           session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "ZTER"
           session.findById("wnd[0]/usr/ctxtVBAK-VKORG").text = "SC10"
-          session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = canal
-          session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = sector
+          session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = "02"
+          session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = "06"
           session.findById("wnd[0]/usr/ctxtVBAK-SPART").setFocus()
           session.findById("wnd[0]/usr/ctxtVBAK-SPART").caretPosition = 2
           session.findById("wnd[0]").sendVKey(0)
@@ -59,8 +59,8 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
                for i in range(0, len(lista_id_productos)):
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,{i}]").text = lista_id_productos[i]
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtRV45A-KWMENG[2,{i}]").text = cantidades[i]
-                    
-                    session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-WERKS[12,{i}]").text = "DSZA"
+                    session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-KDMAT[6,{i}]").text = lista_mat_cl[i]
+                    session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-WERKS[12,{i}]").text = "TOSD"
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-LGORT[65,{i}]").text = "ALMA"
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-LGORT[65,{i}]").setFocus()
                     session.findById(f"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-LGORT[65,{i}]").caretPosition = 4
@@ -84,7 +84,7 @@ def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_p
           session.findById("wnd[0]/tbar[0]/btn[11]").press()
           time.sleep(3)
           ped = session.findById("wnd[0]/sbar").text
-          ped_final = ped[18:25]
+          ped_final = ped[21:29]
           return ped_final
 
      except Exception as e:
