@@ -8,8 +8,8 @@ from tkinter import messagebox
 from getpass import getuser
 import shutil
 import pythoncom
-import time
 from openpyxl import load_workbook
+from time import sleep
 
 
 def interfaz():
@@ -31,9 +31,9 @@ def interfaz():
 
           pythoncom.CoInitialize()
           # Crear una copia del excel padre.
-          shutil.copy(rutas.archivo_excel_trabajo, rutas.archivo_excel)
+          #shutil.copy(rutas.archivo_excel, rutas.archivo_excel_trabajo)
 
-          #---------VARIABLES--------#
+#---------VARIABLES--------#
           afiliado_anterior = None
           afiliado_actual = None
 
@@ -56,18 +56,16 @@ def interfaz():
           filas_completar = []
           fila = 9
           l_filas = []
-          #---------------------------#
-          
-          excel_trabajo = load_workbook(rutas.archivo_excel, data_only=True)
+#---------------------------#
+
+          excel_trabajo = load_workbook(rutas.archivo_excel_trabajo, data_only=True)
           try:
                h_t = excel_trabajo["inicio"]
                cont = 2
                max_filas = int(h_t[f"A2"].value)
 
-
                for i in range(2, max_filas + 1):
                     revision = h_t[f"H{i}"].value
-
                     if revision == "SI":
                          print(f"AFILIADO {afiliado_actual} para REVISION")
                          continue
@@ -86,12 +84,13 @@ def interfaz():
                          filas_completar.append(str(i))
                print(f"Filas a completar:", filas_completar)
 
+
                # -> FACTURACION <--
                for i in range(len(l_afiliados_sap)):
                     afiliado_actual = l_afiliados_sap[i]
 
                     if afiliado_actual == afiliado_anterior or afiliado_anterior == None:
-                         print(f"AFILIADO:{afiliado_actual} |")
+                         print(f"{i} - AFILIADO:{afiliado_actual} |")
                          l_observ_toma.append(l_obsersevaciones_int[i])
                          l_mat_facturar.append(l_id_productos[i])
                          l_mat_cliente_fact.append(l_mat_cliente[i])
@@ -99,14 +98,15 @@ def interfaz():
                          l_filas.append(filas_completar[i])
 
                     elif afiliado_actual != afiliado_anterior:
-                         print(f"Afiliado Diferente")
+                         print(f"{i} - Afiliado Diferente")
                          print(f" ------ SE FACTURA AF: {afiliado_anterior} ------ ")
-                         print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}\n\n")
-                         pedidova01 = va01_2(0, l_canales[i-1], l_sectores[i-1], l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1], l_mat_cliente_fact)
-                         time.sleep(1)
-                         _toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, l_canales[i-1], l_observ_toma[i - 1])
+                         print("VA01:", l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1], l_mat_cliente_fact)
+                         pedidova01 = va01_2(0, l_ped_ext[i-1], l_dispones[i-1], fecha_entrega[i-1], l_mat_facturar, l_cant_facturar, l_convenios[i-1], l_mat_cliente_fact)
+                         sleep(1)
+                         print("TOMA:", "pedidova01", l_dispones[i-1], afiliado_anterior, "06", l_observ_toma)
+                         _toma = toma(0, pedidova01, l_dispones[i-1], afiliado_anterior, "06", l_observ_toma)
 
-                         # Completar Excel con pedido generado
+                         #Completar Excel con pedido generado
                          for fila in l_filas:
                               h_t[f"AA{fila}"] = _toma
 
@@ -123,34 +123,29 @@ def interfaz():
                          l_cant_facturar.append(l_cantidades_va01[i])
                          l_filas.append(filas_completar[i])
 
-                    if i == len(l_afiliados_sap) - 1:
-                         print(f" ------ ULTIMO AFILIADO: {afiliado_actual}")
-                         print(f"\tSE FACTURA MATERIALES: {l_mat_facturar}")
-                         pedidova01 = va01_2(0, l_canales[i], l_sectores[i], l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i], l_mat_cliente_fact)
-                         time.sleep(1)
-                         _toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, l_canales[i], l_observ_toma[i])
+                    elif i == len(l_afiliados_sap) - 1:
+                         print(f"{i} ------ ULTIMO AFILIADO: {afiliado_actual}")
+                         print("ULTIMA VUELTA VA01:",0, l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i], l_mat_cliente_fact)
+                         pedidova01 = va01_2(0, l_ped_ext[i], l_dispones[i], fecha_entrega[i], l_mat_facturar, l_cant_facturar, l_convenios[i], l_mat_cliente_fact)
+                         sleep(1)
+                         print("ULTIMA VUELTA TOMA:",0, "pedidova01", l_dispones[i], afiliado_actual, "06", l_observ_toma)
+                         _toma = toma(0, pedidova01, l_dispones[i], afiliado_actual, "06", l_observ_toma)
 
-                         # Completar Excel con pedido generado
+                         #Completar Excel con pedido generado
                          for fila in l_filas:
                               h_t[f"AA{fila}"] = _toma
-
                          break
+                    print()
                     afiliado_anterior = afiliado_actual
-
 
           except Exception as e:
                print(f"Excepcion el Excel de Trabajo {e}")
           finally:
-               excel_trabajo.save(rutas.archivo_excel)
+               excel_trabajo.save(rutas.archivo_excel_trabajo)
                excel_trabajo.close()
-     
-     
-     def lecturaPdfs():
-          resultado_lectura = lectorPdf()
-          print(resultado_lectura)
 
-     
-     # botonPdf = Button(miFrame, text="Leer PDFS", command=lecturaPdfs)
+
+
      botonCrear = Button(miFrame, text="Ejecutar", command=facturador)
      # botonPdf.grid(row = 10, column = 2, sticky = "e", padx = 10, pady = 10)
      botonCrear.grid(row = 13, column = 2, sticky = "e", padx = 15, pady = 40)

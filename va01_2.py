@@ -3,7 +3,7 @@ import pythoncom
 import win32com.client
 import time
 
-def va01_2(sesionsap, canal, sector, ped_ext, dispone, fecha_entrega, lista_id_productos, cantidades, convenio, lista_mat_cl):
+def va01_2(sesionsap, ped_ext, dispone, fecha_entrega, lista_id_productos, cantidades, convenio, lista_mat_cl):
 
      pythoncom.CoInitialize()
 
