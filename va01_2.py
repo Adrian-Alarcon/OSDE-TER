@@ -3,8 +3,17 @@ import pythoncom
 import win32com.client
 import time
 
-def va01_2(sesionsap, ped_ext, dispone, fecha_entrega, lista_id_productos, cantidades, convenio, lista_mat_cl):
+def va01_2(sesionsap, ped_ext, dispone,
+           fecha_entrega, lista_id_productos, cantidades,
+           convenio, lista_mat_cl, tipo_dispone, ce_asistencial, canal, sector):
+     # print(f"Ped Ext: {ped_ext}")
+     # print(f"Nro Dispone: {dispone}")
+     # print(f"Lista ID PROD: {lista_id_productos}")
+     # print(f"Materiales Cliente: {lista_mat_cl}")
+     # print(f"Tipo Dispone {tipo_dispone}")
+     # print(f"Centro Asistencial?: {ce_asistencial}")
 
+     #----------------------------#
      pythoncom.CoInitialize()
 
      SapGuiAuto = win32com.client.GetObject('SAPGUI')
@@ -28,14 +37,15 @@ def va01_2(sesionsap, ped_ext, dispone, fecha_entrega, lista_id_productos, canti
           application = None
           SapGuiAuto = None
           return
+#----------------------------#
 
      try:
           session.findById("wnd[0]/tbar[0]/okcd").text = "/NVA01"
           session.findById("wnd[0]").sendVKey(0)
           session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "ZTER"
           session.findById("wnd[0]/usr/ctxtVBAK-VKORG").text = "SC10"
-          session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = "02"
-          session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = "06"
+          session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = canal
+          session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = sector
           session.findById("wnd[0]/usr/ctxtVBAK-SPART").setFocus()
           session.findById("wnd[0]/usr/ctxtVBAK-SPART").caretPosition = 2
           session.findById("wnd[0]").sendVKey(0)
@@ -68,8 +78,24 @@ def va01_2(sesionsap, ped_ext, dispone, fecha_entrega, lista_id_productos, canti
           except Exception as a:
                print("Linea 72 VA01-2", a)
                return
-          
+
           session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/btnBT_HEAD").press()
+
+          # --- LOGICA PARA PEDIDOS EN CENTROS ASISNTENCIALES --- #
+          if tipo_dispone == 0:
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08").select()
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/cmbGVS_TC_DATA-REC-PARVW[0,4]").key = "ZD"
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/ctxtGVS_TC_DATA-REC-PARTNER[1,4]").text = dispone
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/ctxtGVS_TC_DATA-REC-PARTNER[1,4]").setFocus()
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/ctxtGVS_TC_DATA-REC-PARTNER[1,4]").caretPosition = 8
+               session.findById(r"wnd[0]").sendVKey(0)
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/cmbGVS_TC_DATA-REC-PARVW[0,8]").key = "ZC"
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/ctxtGVS_TC_DATA-REC-PARTNER[1,8]").text = ce_asistencial
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/ctxtGVS_TC_DATA-REC-PARTNER[1,8]").setFocus()
+               session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\08/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/ctxtGVS_TC_DATA-REC-PARTNER[1,8]").caretPosition = 8
+               session.findById(r"wnd[0]").sendVKey(0)
+          # ----------------------------------------------------- #
+
           session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\10").select()
           session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\12").select()
           session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\13").select()
@@ -79,7 +105,6 @@ def va01_2(sesionsap, ped_ext, dispone, fecha_entrega, lista_id_productos, canti
           session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\13/ssubSUBSCREEN_BODY:SAPMV45A:4312/sub8309:SAPMV45A:8309/ctxtVBAK-ZZTURNO").text = "MAN"
           session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\13/ssubSUBSCREEN_BODY:SAPMV45A:4312/sub8309:SAPMV45A:8309/ctxtVBAK-ZZTURNO").setFocus()
           session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\13/ssubSUBSCREEN_BODY:SAPMV45A:4312/sub8309:SAPMV45A:8309/ctxtVBAK-ZZTURNO").caretPosition = 3
-
           #Hace falta agregar una excepcion en este punto?
           session.findById("wnd[0]/tbar[0]/btn[11]").press()
           time.sleep(3)

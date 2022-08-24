@@ -5,7 +5,7 @@ import time
 
 
 
-def toma(sesionsap, ped_final, dispone, afiliado_sap, canal, observaciones_internas):
+def toma(sesionsap, ped_final, afiliado_sap, dispone, observaciones_internas):
     
     pythoncom.CoInitialize()
 
@@ -42,14 +42,15 @@ def toma(sesionsap, ped_final, dispone, afiliado_sap, canal, observaciones_inter
         session.findById("wnd[0]/usr/cntlCC_LISTAPED/shellcont/shell").currentCellColumn = "STAT_DISP_ICON"
         session.findById("wnd[0]/usr/cntlCC_LISTAPED/shellcont/shell").selectedRows = "0"
         session.findById("wnd[0]/usr/cntlCC_LISTAPED/shellcont/shell").pressToolbarButton("FN_MODPED")
-        session.findById("wnd[0]/usr/tabsTABS/tabpTAB_PED/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0101/cmbZSD_TOMA_CABEC-LIFSK").key = "PB"
+        session.findById("wnd[0]/usr/tabsTABS/tabpTAB_PED/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0101/cmbZSD_TOMA_CABEC-LIFSK").key = "NT"
 
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT").select()
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/ctxtGS_ENTREGA-AFIL_NRO").text = afiliado_sap
+        session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/ctxtGS_ENTREGA-DISPONE_ID").text = dispone
 
-        if canal != "10":
-            session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/ctxtGS_ENTREGA-DISPONE_ID").text = dispone
-        
+        # ----- DISPONE O CENTRO ASISTENCIAL ----- #
+
+        # ---------------------------------------- #
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/ctxtGS_ENTREGA-DISPONE_ID").setFocus()
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/ctxtGS_ENTREGA-DISPONE_ID").caretPosition = 8
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/txtGS_ENTREGA-OBSERV_INT").text = observaciones_internas[0]
@@ -60,8 +61,15 @@ def toma(sesionsap, ped_final, dispone, afiliado_sap, canal, observaciones_inter
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/btnBTN_CALC_FECHA").press()
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_ENT/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0102/btnBTN_CALC_FECHA").press()
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_PED").select()
+        time.sleep(1)
+        session.findById("wnd[0]/usr/tabsTABS/tabpTAB_PED").select()
+        time.sleep(1)
+        session.findById("wnd[0]/usr/tabsTABS/tabpTAB_PED").select()
+        time.sleep(1)
         session.findById("wnd[0]/usr/tabsTABS/tabpTAB_PED/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0101/subSUBS_TRAB:ZDMSD_TOMA_PEDIDO:0111/btnBTN_SIMULAR").press()
-        
+
+        session.findById("wnd[0]/usr/tabsTABS/tabpTAB_PED/ssubTABS_SCA:ZDMSD_TOMA_PEDIDO:0101/subSUBS_TRAB:ZDMSD_TOMA_PEDIDO:0111/btnBTN_SIMULAR").press()
+
         try:
             session.findById("wnd[0]/tbar[0]/btn[11]").press()
             session.findById("wnd[1]/usr/btnBUTTON_1").press()
@@ -82,11 +90,16 @@ def toma(sesionsap, ped_final, dispone, afiliado_sap, canal, observaciones_inter
             session.findById("wnd[1]").sendVKey(0)
             session.findById("wnd[1]").sendVKey(0)
         except:
-            session.findById("wnd[1]").sendVKey(0)
-            session.findById("wnd[1]").sendVKey(0)
-            return ped_final
+            try:
+                session.findById("wnd[1]").sendVKey(0)
+                session.findById("wnd[1]").sendVKey(0)
+                return ped_final
+            except:
+                return ped_final
         return ped_final
     
     except:
         time.sleep(3)
-        return f"{ped_final}"
+        return -1
+
+# toma(0, "5655819", "85358084", "84000820", "NO TOCAR - ADRIAN PROCESOS")

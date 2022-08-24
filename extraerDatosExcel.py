@@ -1,6 +1,7 @@
+import time
 import rutas
 from openpyxl import load_workbook
-import os.path
+import os
 from va01_2 import va01_2
 from zsd_toma import toma
 import shutil
@@ -12,43 +13,46 @@ def cargar_listas_datos(hoja, cant_filas):
     ESTA FUNCION SE ENCARGA DE RECIBIR LA HOJA DEL EXCEL Y LA CANTIDAD DE FILAS
     PARA PODER CARGAR TODOS LOS DATOS RELEVANTES A LAS LISTAS
     """
-    afi_osde = []
-    id_mat_cliente = []
-    cantidades = []
-    id_mat_sap = []
-    ped_externo = []
-    observ_internas = []
-    dispones = []
-    id_afil_sap = []
-    convenio = []
-    fecha = []
+    l_mat_cliente_e = []
+    l_cant_e = []
+    l_ped_ext_e = []
+    l_observ_e = []
+    l_dispones_e = []
+    l_id_afil_e = []
+    l_id_mat_sap_e = []
+    l_convenios_e = []
     fila_ped_cargado = []
-    print(cant_filas)
+
     i = 2
     while i <= cant_filas:
         # REVISAR SI LA FILA SE PUEDE CARGAR (revision = NO)
         revision = hoja[f"H{i}"].value
         if revision == "NO":
             # AGREGAR DATOS RELEVANTES A LAS LISTAS
-            afi_osde.append(hoja[f"B{i}"].value)
-            id_mat_cliente.append(hoja[f"D{i}"].value)
-            cantidades.append(hoja[f"E{i}"].value)
-            ped_externo.append(hoja[f"F{i}"].value)
-            observ_internas.append(hoja[f"G{i}"].value)
-            dispones.append(hoja[f"N{i}"].value)
-            id_afil_sap.append(hoja[f"O{i}"].value)
-            id_mat_sap.append(hoja[f"P{i}"].value)
-            convenio.append(hoja[f"Q{i}"].value)
-            fecha.append(hoja[f"V{i}"].value)
+            l_mat_cliente_e.append(hoja[f"D{i}"].value)
+            l_cant_e.append(hoja[f"E{i}"].value)
+            l_ped_ext_e.append(hoja[f"F{i}"].value)
+            l_observ_e.append(hoja[f"G{i}"].value)
+            l_dispones_e.append(hoja[f"N{i}"].value)
+            l_id_afil_e.append(hoja[f"O{i}"].value)
+            l_id_mat_sap_e.append(hoja[f"P{i}"].value)
+            l_convenios_e.append(hoja[f"Q{i}"].value)
             fila_ped_cargado.append(str(i))
         else:
             continue
         i += 1
-    return afi_osde, id_mat_cliente, cantidades, ped_externo, observ_internas, dispones, id_afil_sap, id_mat_sap, convenio, fecha, fila_ped_cargado
+    return l_mat_cliente_e, l_cant_e, l_ped_ext_e, l_observ_e, l_dispones_e, l_id_afil_e, l_id_mat_sap_e, l_convenios_e, fila_ped_cargado
 
 
 def cargar_pedidos(tupla_lista_datos, hoja):
-    afi_osde, id_mat_cliente, cantidades, ped_externo, observ_internas, dispones, id_afil_sap, id_mat_sap,convenio, fecha, fila_ped_cargado = tupla_lista_datos
+    l_mat_cliente_e,\
+    l_cant_e, l_ped_ext_e, \
+    l_observ_e, \
+    l_dispones_e, \
+    l_id_afil_e, \
+    l_id_mat_sap_e, \
+    l_convenios_e, \
+    fila_ped_cargado = tupla_lista_datos
 
     mat_cl_cargar = []
     cantidades_cargar = []
@@ -104,22 +108,22 @@ def cargar_pedidos(tupla_lista_datos, hoja):
 
 # --- PROGRAMA PRINCIPAL --- #
 def carga_sap():
-    # pythoncom.CoInitialize()
-    # Crear una copia del excel padre.
+    pythoncom.CoInitialize()
     shutil.copy(rutas.archivo_excel, rutas.archivo_excel_trabajo)
-
+    time.sleep(2)
     existe_ruta = os.path.exists(rutas.archivo_excel_trabajo)
     if existe_ruta:
         try:
-            excel = load_workbook(rutas.archivo_excel_trabajo)
+            excel = load_workbook(rutas.archivo_excel_trabajo, data_only=True)
             hoja = excel["inicio"]
             cant_filas = int(hoja["A2"].value)
 
             # FUNCION QUE CARGA LA INFORMACION DEL EXCEL Y DEVUELVE LISTAS CARGADAS DE DATOS
             tupla_lista_de_datos = cargar_listas_datos(hoja, cant_filas)
-            print(tupla_lista_de_datos)
-            # CARGAR LOS PEDIDOS CON LOS DATOS PREVIAMENTE CARGADOS EN LAS LISTAS
-            cargar_pedidos(tupla_lista_de_datos, hoja)
+            for listas in tupla_lista_de_datos:
+                print(listas)
+
+            # cargar_pedidos(tupla_lista_de_datos, hoja)
 
         except Exception as e:
             print(e)
@@ -128,3 +132,5 @@ def carga_sap():
     else:
         print("El Excel no existe! Revisar...")
 
+
+carga_sap()
